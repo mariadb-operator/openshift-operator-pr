@@ -76,12 +76,11 @@ runs:
           git reset --hard upstream/main
 
           echo "🚀 Copying bundle"
-          CI_YAML="${ROOT_DIR}/${{ inputs.ci-path-file }}"
           mkdir -p "operators/${{ inputs.name }}/${{ inputs.version }}"
-          rsync -av --exclude="${CI_YAML}" "${ROOT_DIR}/${{ inputs.bundle-path-dir }}/" "operators/${{ inputs.name }}/${{ inputs.version }}"
+          rsync -av --exclude="ci.yaml" "${ROOT_DIR}/${{ inputs.bundle-path-dir }}/" "operators/${{ inputs.name }}/${{ inputs.version }}"
 
           echo "🚀 Copying ci.yaml"
-          cp "${CI_YAML}" "operators/${{ inputs.name }}/"
+          cp "${ROOT_DIR}/${{ inputs.ci-path-file }}" "operators/${{ inputs.name }}/"
 
           echo "🚀 Submitting PR"
           git add .
