@@ -1,0 +1,87 @@
+name: "OpenShift operator PR"
+description: "Submit PRs to OpenShift operator repositories"
+branding:
+  icon: "git-pull-request"
+  color: "red"
+inputs:
+  name:
+    description: "Operator name to submit."
+    required: true
+  version:
+    description: "Operator version to submit."
+    required: true
+  fork-repo-name:
+    description: "OpenShift operators fork repository name e.g.\"mariadb-operator/community-operators\"."
+    required: true
+  upstream-repo-url:
+    description: "OpenShift operators upstream repository https URL e.g.\"https://github.com/k8s-operatorhub/community-operators\"."
+    required: true
+  bundle-path-dir:
+    description: "Path to the OLM bundle directory."
+    required: true
+  ci-path-file:
+    description: "Path to the ci.yaml file"
+    required: true
+  user-name:
+    description: "User name to use in the commit."
+    required: false
+    default: "$GITHUB_ACTOR"
+  user-email:
+    description: "User email to use in the commit."
+    required: false
+    default: "$GITHUB_ACTOR@users.noreply.github.com"
+runs:
+    using: 'composite'
+    steps:
+      - name: Check Runner OS
+        if: ${{ runner.os != 'Linux' }}
+        shell: bash
+        run: |
+          echo "::error title=⛔ error hint::Support Linux Only"
+          exit 1
+
+      - name: Check GITHUB_TOKEN env
+        if: ${{ env.GITHUB_TOKEN == '' }}
+        shell: bash
+        run: |
+          echo "::error title=⛔ error hint::GITHUB_TOKEN environment variable is mandatory"
+          exit 1
+
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: "${{ inputs.fork-repo-name }}"
+          path: "."
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Configure Git
+        shell: bash
+        run: |
+          git config user.name "${{ inputs.user-name }}"
+          git config user.email "${{ inputs.user-email }}"
+
+      - name: Upstream PR
+        shell: bash
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          echo "🚀 Setting up upstream"
+          git remote add upstream "${{ inputs.upstream-repo-url }}"
+          git fetch --all
+          git reset --hard upstream/main
+
+          echo "🚀 Copying bundle"
+          mkdir -p "operators/${{ inputs.name }}/${{ inputs.version }}"
+          cp -Tr "${{ inputs.bundle-path-dir }}" "operators/${{ inputs.name }}/${{ inputs.version }}"
+
+          echo "🚀 Copying ci.yaml"
+          cp "${{ inputs.ci-path-file }}" "operators/${{ inputs.name }}/"
+
+          echo "🚀 Submitting PR"
+          git add .
+          git commit -m "operator ${{ inputs.name }}(${{ inputs.version }})" --signoff
+          git push -f 
+          gh pr create --repo $UPSTREAM_REPO \
+            --title "operator ${{ inputs.name }} (${{ inputs.version }})" \
+            --body "Added operator ${{ inputs.name }} (${{ inputs.version }})"
