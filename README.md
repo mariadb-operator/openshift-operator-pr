@@ -67,7 +67,7 @@ jobs:
 ```
 
 > [!NOTE]  
-> The provided paths match the manifests available in the current repository.
+> The paths provided in the previous example match the manifests available in the current repository.
 
 ### Example PRs
 
