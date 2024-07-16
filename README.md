@@ -52,7 +52,7 @@ jobs:
       # - Push bundle image to a registry
 
       - name: Operator PR
-        uses: mariadb-operator/openshift-operator-pr@v0.0.1
+        uses: mariadb-operator/openshift-operator-pr@v0.0.2
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
