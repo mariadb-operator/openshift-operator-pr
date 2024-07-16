@@ -13,14 +13,14 @@ inputs:
   fork-repo-name:
     description: "OpenShift operators fork repository name e.g.\"mariadb-operator/community-operators\"."
     required: true
-  upstream-repo-url:
-    description: "OpenShift operators upstream repository https URL e.g.\"https://github.com/k8s-operatorhub/community-operators\"."
+  upstream-repo-name:
+    description: "OpenShift operators upstream repository name e.g.\"k8s-operatorhub/community-operators\"."
     required: true
   bundle-path-dir:
     description: "Path to the OLM bundle directory."
     required: true
   ci-path-file:
-    description: "Path to the ci.yaml file"
+    description: "Path to the ci.yaml file."
     required: true
   user-name:
     description: "User name to use in the commit."
@@ -41,7 +41,7 @@ runs:
           exit 1
 
       - name: Check GITHUB_TOKEN env
-        if: ${{ env.GITHUB_TOKEN == '' }}
+        if: ${{ !env.GITHUB_TOKEN }}
         shell: bash
         run: |
           echo "::error title=⛔ error hint::GITHUB_TOKEN environment variable is mandatory"
@@ -53,7 +53,7 @@ runs:
           fetch-depth: 0
           repository: "${{ inputs.fork-repo-name }}"
           path: "."
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ env.GITHUB_TOKEN }}"
 
       - name: Configure Git
         shell: bash
@@ -64,16 +64,16 @@ runs:
       - name: Upstream PR
         shell: bash
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ env.GITHUB_TOKEN }}"
         run: |
           echo "🚀 Setting up upstream"
-          git remote add upstream "${{ inputs.upstream-repo-url }}"
+          git remote add upstream "https://github.com/${{ inputs.upstream-repo-name }}"
           git fetch --all
           git reset --hard upstream/main
 
           echo "🚀 Copying bundle"
           mkdir -p "operators/${{ inputs.name }}/${{ inputs.version }}"
-          cp -Tr "${{ inputs.bundle-path-dir }}" "operators/${{ inputs.name }}/${{ inputs.version }}"
+          cp -r "${{ inputs.bundle-path-dir }}"/* "operators/${{ inputs.name }}/${{ inputs.version }}"
 
           echo "🚀 Copying ci.yaml"
           cp "${{ inputs.ci-path-file }}" "operators/${{ inputs.name }}/"
@@ -82,6 +82,6 @@ runs:
           git add .
           git commit -m "operator ${{ inputs.name }}(${{ inputs.version }})" --signoff
           git push -f 
-          gh pr create --repo $UPSTREAM_REPO \
+          gh pr create --repo "${{ inputs.upstream-repo-name }}" \
             --title "operator ${{ inputs.name }} (${{ inputs.version }})" \
             --body "Added operator ${{ inputs.name }} (${{ inputs.version }})"

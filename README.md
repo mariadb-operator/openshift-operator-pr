@@ -10,7 +10,8 @@ GitHub action to submit PRs to OpenShift operator repositories.
 
 ### Before using this action
 
-You must fork the [operator repositories](#operator-repositories) you are willing to submit your operator to.
+- Fork the [operator repositories](#operator-repositories) you are willing to submit your operator to.
+- Get a GitHub PAT with write access to the previous repo.
 
 ### Usage
 
@@ -26,9 +27,11 @@ jobs:
   operator-pr:
     name: Version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -50,13 +53,13 @@ jobs:
 
       - name: Operator PR
         uses: mariadb-operator/openshift-operator-pr@v0.0.1
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           name: "mariadb-operator"
           version: "${{ steps.version.outputs.version }}"
           fork-repo-name: "mariadb-operator/community-operators"
-          upstream-repo-url: "https://github.com/k8s-operatorhub/community-operators"
+          upstream-repo-name: "k8s-operatorhub/community-operators"
           bundle-path-dir: "bundle"
           ci-path-file: "ci.yaml"
-          user-name: "Martin Montes"
-          user-email: "martin11lrx@gmail.com"
 ``` 
