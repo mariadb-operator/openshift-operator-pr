@@ -73,7 +73,7 @@ runs:
 
           echo "🚀 Copying bundle"
           mkdir -p "operators/${{ inputs.name }}/${{ inputs.version }}"
-          cp -r "${{ inputs.bundle-path-dir }}"/* "operators/${{ inputs.name }}/${{ inputs.version }}"
+          rsync -av --exclude="ci.yaml" "${{ inputs.bundle-path-dir }}/" "operators/${{ inputs.name }}/${{ inputs.version }}"
 
           echo "🚀 Copying ci.yaml"
           cp "${{ inputs.ci-path-file }}" "operators/${{ inputs.name }}/"
