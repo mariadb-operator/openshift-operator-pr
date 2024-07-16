@@ -60,11 +60,14 @@ jobs:
           version: "${{ steps.version.outputs.version }}"
           fork-repo-name: "mariadb-operator/community-operators"
           upstream-repo-name: "k8s-operatorhub/community-operators"
-          bundle-path-dir: "bundle"
-          ci-path-file: "ci.yaml"
-          user-name: "Foo Bar"
-          user-email: "foobar@foobarcorp.com"
+          bundle-path-dir: "deploy/olm"
+          ci-path-file: "deploy/olm/ci.yaml"
+          user-name: "Martin Montes"
+          user-email: "martin11lrx@gmail.com"
 ```
+
+> [!NOTE]  
+> The provided paths match the manifests available in the current repository.
 
 ### Example PRs
 
