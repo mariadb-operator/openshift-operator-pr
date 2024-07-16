@@ -87,7 +87,10 @@ runs:
           git add .
           git commit -m "operator ${{ inputs.name }}(${{ inputs.version }})" --signoff
           git push -f 
-          PR_CMD="gh pr create --draft --repo '${{ inputs.upstream-repo-name }}' --title 'operator ${{ inputs.name }} (${{ inputs.version }})' --body 'Added operator ${{ inputs.name }} (${{ inputs.version }})'"
+          PR_CMD="gh pr create --repo '${{ inputs.upstream-repo-name }}' --title 'operator ${{ inputs.name }} (${{ inputs.version }})' --body 'Added operator ${{ inputs.name }} (${{ inputs.version }})'"
+          if [ "${{ inputs.dry-run }}" == "true" ]; then
+            PR_CMD="${PR_CMD} --dry-run"
+          fi
           eval "${PR_CMD}"
 
           echo "🚀 Switching back to root directory"
