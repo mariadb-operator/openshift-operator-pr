@@ -1,4 +1,5 @@
 # ⛑️ openshift-operator-pr
+
 [![CI](https://github.com/mariadb-operator/openshift-operator-pr/actions/workflows/ci.yaml/badge.svg)](https://github.com/mariadb-operator/openshift-operator-pr/actions/workflows/ci.yaml)
 
 GitHub action to submit PRs to OpenShift operator repositories.
