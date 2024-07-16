@@ -25,7 +25,7 @@ jobs:
           version: "test"
           fork-repo-name: "mariadb-operator/test-operators"
           upstream-repo-name: "redhat-openshift-ecosystem/certified-operators"
-          bundle-path-dir: "deploy/olm/bundle"
+          bundle-path-dir: "deploy/olm"
           ci-path-file: "deploy/olm/ci.yaml"
           user-name: "Martin Montes"
           user-email: "martin11lrx@gmail.com"
