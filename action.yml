@@ -56,7 +56,7 @@ runs:
         with:
           fetch-depth: 0
           repository: "${{ inputs.fork-repo-name }}"
-          path: "."
+          path: "fork-repo"
           token: "${{ env.GITHUB_TOKEN }}"
 
       - name: Configure Git
@@ -70,17 +70,22 @@ runs:
         env:
           GITHUB_TOKEN: "${{ env.GITHUB_TOKEN }}"
         run: |
+          echo "🚀 Switching directory"
+          ROOT_DIR=$(pwd)
+          cd "fork-repo"
+
           echo "🚀 Setting up upstream"
           git remote add upstream "https://github.com/${{ inputs.upstream-repo-name }}"
           git fetch --all
           git reset --hard upstream/main
 
           echo "🚀 Copying bundle"
+          CI_YAML="${ROOT_DIR}/${{ inputs.ci-path-file }}"
           mkdir -p "operators/${{ inputs.name }}/${{ inputs.version }}"
-          rsync -av --exclude="ci.yaml" "${{ inputs.bundle-path-dir }}/" "operators/${{ inputs.name }}/${{ inputs.version }}"
+          rsync -av --exclude="${CI_YAML}" "${ROOT_DIR}/${{ inputs.bundle-path-dir }}/" "operators/${{ inputs.name }}/${{ inputs.version }}"
 
           echo "🚀 Copying ci.yaml"
-          cp "${{ inputs.ci-path-file }}" "operators/${{ inputs.name }}/"
+          cp "${CI_YAML}" "operators/${{ inputs.name }}/"
 
           echo "🚀 Submitting PR"
           git add .
@@ -88,6 +93,9 @@ runs:
           git push -f 
           PR_CMD="gh pr create --repo '${{ inputs.upstream-repo-name }}' --title 'operator ${{ inputs.name }} (${{ inputs.version }})' --body 'Added operator ${{ inputs.name }} (${{ inputs.version }})'"
           if [ "${{ inputs.dry-run }}" == "true" ]; then
-            PR_CMD="$PR_CMD --dry-run"
+            PR_CMD="${PR_CMD} --dry-run"
           fi
-          eval "$PR_CMD"
+          eval "${PR_CMD}"
+
+          echo "🚀 Switching back to root directory"
+          cd "${ROOT_DIR}"
