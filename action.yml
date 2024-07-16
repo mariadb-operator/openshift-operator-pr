@@ -59,12 +59,6 @@ runs:
           path: "fork-repo"
           token: "${{ env.GITHUB_TOKEN }}"
 
-      - name: Configure Git
-        shell: bash
-        run: |
-          git config user.name "${{ inputs.user-name }}"
-          git config user.email "${{ inputs.user-email }}"
-
       - name: Upstream PR
         shell: bash
         env:
@@ -74,7 +68,9 @@ runs:
           ROOT_DIR=$(pwd)
           cd "fork-repo"
 
-          echo "🚀 Setting up upstream"
+          echo "🚀 Setting up fork repo"
+          git config user.name "${{ inputs.user-name }}"
+          git config user.email "${{ inputs.user-email }}"
           git remote add upstream "https://github.com/${{ inputs.upstream-repo-name }}"
           git fetch --all
           git reset --hard upstream/main
