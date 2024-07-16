@@ -20,8 +20,8 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GHA_TOKEN }}"
         with:
           name: "mariadb-operator"
-          version: "test"
-          fork-repo-name: "mariadb-operator/test-operators"
+          version: "v0.0.30"
+          fork-repo-name: "mariadb-operator/certified-operators"
           upstream-repo-name: "redhat-openshift-ecosystem/certified-operators"
           bundle-path-dir: "deploy/olm"
           ci-path-file: "deploy/olm/ci.yaml"
