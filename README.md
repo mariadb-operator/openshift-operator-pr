@@ -29,8 +29,6 @@ jobs:
   operator-pr:
     name: Version
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,6 +62,8 @@ jobs:
           upstream-repo-name: "k8s-operatorhub/community-operators"
           bundle-path-dir: "bundle"
           ci-path-file: "ci.yaml"
+          user-name: "Foo Bar"
+          user-email: "foobar@foobarcorp.com"
 ```
 
 ### Example PRs
