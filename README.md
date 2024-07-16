@@ -63,4 +63,8 @@ jobs:
           upstream-repo-name: "k8s-operatorhub/community-operators"
           bundle-path-dir: "bundle"
           ci-path-file: "ci.yaml"
-``` 
+```
+
+### Example PRs
+
+- https://github.com/redhat-openshift-ecosystem/certified-operators/pull/4154
