@@ -34,6 +34,10 @@ inputs:
     description: "Enable dry run mode."
     required: false
     default: "false"
+  draft:
+    description: "Enable draft mode."
+    required: false
+    default: "false"
 runs:
     using: 'composite'
     steps:
@@ -89,6 +93,9 @@ runs:
           PR_CMD="gh pr create --repo '${{ inputs.upstream-repo-name }}' --title 'operator ${{ inputs.name }} (${{ inputs.version }})' --body 'Added operator ${{ inputs.name }} (${{ inputs.version }})'"
           if [ "${{ inputs.dry-run }}" == "true" ]; then
             PR_CMD="${PR_CMD} --dry-run"
+          fi
+          if [ "${{ inputs.draft }}" == "true" ]; then
+            PR_CMD="${PR_CMD} --draft"
           fi
           eval "${PR_CMD}"
 
